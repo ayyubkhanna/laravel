@@ -25,19 +25,18 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
 
-            if($user->hasRole('admin')){
-                return response()->json(['message' => 'Anda tidak memiliki Akses'], 403);
+            if($user->hasRole(['admin', 'editor'] )){
+                $token = $user->createToken('AuthTokens')->plainTextToken;
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Success login',
+                    'data' => $user,
+                    'token' => $token,
+                ], 200);
             }
 
-            // Membuat token untuk user yang berhasil login
-            $token = $user->createToken('AuthToken')->plainTextToken;
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Success login',
-                'data' => $user,
-                'token' => $token
-            ], 200);
+            return response()->json(['message' => 'Anda tidak memiliki Akses'], 403);
         } else {
             // Jika kredensial salah
             return response()->json([

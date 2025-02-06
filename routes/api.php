@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Editor\ChildController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user/login', function (Request $request) {
     return $request->user();
 });
 
@@ -30,4 +31,10 @@ Route::name('admin')
         ->middleware(['auth:sanctum', 'role:admin'])
         ->group(function () {
             Route::resource('user', UserController::class);
+        });
+
+Route::name('editor')
+        ->middleware(['auth:sanctum', 'role:editor'])
+        ->group(function () {
+            Route::resource('data-anak', ChildController::class);
         });
