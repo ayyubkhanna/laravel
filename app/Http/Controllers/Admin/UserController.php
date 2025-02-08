@@ -18,8 +18,10 @@ class UserController extends Controller
     public function index()
     {
         $user = Cache::remember('users', now()->addMinutes(5), function() {
-            return User::paginate(10);
+            return User::all();
         });
+
+        // dd($user);
 
         $roles = [];
 
@@ -34,7 +36,7 @@ class UserController extends Controller
                 'status' => true,
                 'message' => 'Success',
                 'data' => $user,
-            ], 200)->header('Cache-Control', 'public, max-age=3600');;
+            ], 200);
         } else {
             return response()->json([
                 'status' => false,
@@ -69,10 +71,14 @@ class UserController extends Controller
 
          $user->addRole($role->id);
 
+         $roles = $user->roles;
+
+         Cache::forget('users');
+
          return response()->json([
             'status' => true,
             'message' => 'Created Successfully',
-            'data' => $user
+            'data' => $user,
          ], 201);
     }
 
@@ -82,6 +88,8 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::find($id);
+
+        $roles = $user->roles;
 
         if($user) {
             return response()->json([
@@ -130,6 +138,8 @@ class UserController extends Controller
 
          $user->addRole($role->id);
 
+         Cache::forget('users');
+
          return response()->json([
             'status' => true,
             'message' => 'Created Successfully',
@@ -158,6 +168,8 @@ class UserController extends Controller
         }
 
         $user->delete();
+
+        Cache::forget('users');
 
         return response()->json([
             'status' => true,

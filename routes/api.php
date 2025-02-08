@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Editor\ChildController;
@@ -31,6 +33,8 @@ Route::name('admin')
         ->middleware(['auth:sanctum', 'role:admin'])
         ->group(function () {
             Route::resource('user', UserController::class);
+            Route::resource('role', RoleController::class);
+            Route::resource('permission', PermissionController::class);
         });
 
 Route::name('editor')

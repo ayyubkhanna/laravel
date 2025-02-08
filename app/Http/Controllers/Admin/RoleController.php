@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
@@ -15,17 +16,17 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Cache::remember('users', now()->addMinutes(5), function() {
-            return Role::paginate(10);
+        $roles = Cache::remember('roles', now()->addMinutes(5), function() {
+            return Role::all();
         });
-
 
         if($roles) {
             return response()->json([
                 'status' => true,
                 'message' => 'Success',
                 'data' => $roles,
-            ], 200)->header('Cache-Control', 'public, max-age=3600');;
+                // 'rolePermissions' => $rolePermissions
+            ], 200);
         } else {
             return response()->json([
                 'status' => false,
@@ -59,6 +60,8 @@ class RoleController extends Controller
 
          $roles->givePermissions($request->permission_id);
 
+         Cache::forget('roles');
+
          return response()->json([
             'status' => true,
             'message' => 'Created Role Success',
@@ -73,6 +76,8 @@ class RoleController extends Controller
     {
 
             $roles = Role::find($id);
+
+            $roles->permissions;
 
             if($roles) {
                 return response()->json([
@@ -123,6 +128,8 @@ class RoleController extends Controller
 
          $roles->givePermissions($request->permission_id);
 
+         Cache::forget('roles');
+
          return response()->json([
             'status' => true,
             'message' => 'Updated Role Success',
@@ -145,6 +152,8 @@ class RoleController extends Controller
         }
 
         $role->delete();
+
+        Cache::forget('roles');
 
         return response()->json([
             'status' => true,

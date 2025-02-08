@@ -15,8 +15,8 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permission = Cache::remember('users', now()->addMinutes(5), function() {
-            return Permission::paginate(10);
+        $permission = Cache::remember('permissions', now()->addMinutes(5), function() {
+            return Permission::all();
         });
 
 
@@ -47,6 +47,8 @@ class PermissionController extends Controller
             'display_name' => $request->display_name,
             'description' => $request->description,
          ]);
+
+         Cache::forget('permissions');
 
          return $this->httpResponse(true, 'Created Permission', $permission, 201);
     }
@@ -94,6 +96,9 @@ class PermissionController extends Controller
             'description' => $request->description,
          ]);
 
+
+         Cache::forget('permissions');
+
          return $this->httpResponse(true, 'Updated Successfully', $permission, 200);
 
     }
@@ -110,6 +115,8 @@ class PermissionController extends Controller
         }
 
         $permission->delete();
+
+        Cache::forget('permissions');
 
         return $this->httpResponse(true, 'Deleted Success', '', 200);
     }
