@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('children', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('posyandu_id');
             $table->string('kia');
             $table->string('name');
-            $table->string('kk');
             $table->string('nik');
             $table->string('alamat');
             $table->string('orang_tua');
             $table->timestamps();
+
+            $table->foreign('posyandu_id')->references('id')->on('posyandus')->onDelete('cascade');
         });
     }
 

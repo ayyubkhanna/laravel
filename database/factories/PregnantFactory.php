@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Posyandu;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Child>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pregnant>
  */
-class ChildFactory extends Factory
+class PregnantFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,12 +17,13 @@ class ChildFactory extends Factory
     public function definition(): array
     {
         return [
-            'posyandu_id' => fake()->randomElement([1,10]),
-            'kia' => fake()->numberBetween(1,1000),
+            'posyandu_id' => fake()->randomElement([1, 10]),
             'name' => fake()->name,
             'nik' => fake()->numberBetween(1, 1000),
             'alamat' => "Dusun " . fake()->numberBetween(1, 5),
-            'orang_tua' => fake()->firstNameMale,
+            'awal_kehamilan' => fake()->date(),
+            'perkiraan_hamil' => fake()->date(),
+            'nama_suami' => fake()->firstNameMale,
         ];
     }
 }

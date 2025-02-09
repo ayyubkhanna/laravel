@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Child extends Model
+class PregnantCheckup extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guaded = [];
 
-    public function posyandu()
+    public function pregnant()
     {
-        return $this->belongsTo(Posyandu::class);
+        return $this->belongsTo(Pregnant::class);
     }
 }

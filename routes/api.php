@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Editor\ChildController;
+use App\Http\Controllers\Editor\Posyandu;
+use App\Http\Controllers\Editor\PregnantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,9 +38,8 @@ Route::name('admin')
             Route::resource('role', RoleController::class);
             Route::resource('permission', PermissionController::class);
         });
-
-Route::name('editor')
-        ->middleware(['auth:sanctum', 'role:editor'])
-        ->group(function () {
-            Route::resource('data-anak', ChildController::class);
-        });
+Route::middleware(['auth:sanctum'])->group( function () {
+    Route::resource('data-anak', ChildController::class);
+    Route::resource('posyandu', Posyandu::class);
+    Route::resource('pregnant', PregnantController::class);
+});

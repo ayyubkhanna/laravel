@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Child extends Model
+class Pregnant extends Model
 {
     use HasFactory;
 
@@ -14,5 +14,10 @@ class Child extends Model
     public function posyandu()
     {
         return $this->belongsTo(Posyandu::class);
+    }
+
+    public function checkups()
+    {
+        return $this->hasMany(Posyandu::class);
     }
 }
