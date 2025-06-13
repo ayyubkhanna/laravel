@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -10,10 +11,12 @@ class ExampleTest extends TestCase
     /**
      * A basic test example.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function AuthTest(): void
     {
-        $response = $this->get('/');
+        User::factory(2)->create();
 
-        $response->assertStatus(200);
+        $response = $this->post('/login');
+
+        $response->assertStatus(200)->assertJsonCount(2);
     }
 }

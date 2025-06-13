@@ -18,7 +18,7 @@ class ChildFactory extends Factory
     public function definition(): array
     {
         return [
-            'posyandu_id' => fake()->randomElement([1,10]),
+            'posyandu_id' => fake()->randomElement([1,2]),
             'kia' => fake()->numberBetween(1,1000),
             'name' => fake()->name,
             'nik' => fake()->numberBetween(1, 1000),

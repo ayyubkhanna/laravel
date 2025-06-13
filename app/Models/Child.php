@@ -15,4 +15,14 @@ class Child extends Model
     {
         return $this->belongsTo(Posyandu::class);
     }
+
+    public function checkup ()
+    {
+        return $this->hasMany(ChildCheckup::class);
+    }
+
+    public function stunting ()
+    {
+        return $this->hasOne(Stunting::class);
+    }
 }

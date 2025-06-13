@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -45,5 +46,19 @@ class AuthController extends Controller
             ], 401);
         }
 
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->currentAccessToken();
+
+        if ($token) {
+            DB::table('personal_access_tokens')->where('id', $token->id)->delete();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logout berhasil'
+        ], 200);
     }
 }

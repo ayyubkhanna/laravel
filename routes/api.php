@@ -4,8 +4,11 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ChartController;
+use App\Http\Controllers\Editor\Child\ChildCheckup;
 use App\Http\Controllers\Editor\ChildController;
 use App\Http\Controllers\Editor\Posyandu;
+use App\Http\Controllers\Editor\Pregnant\CheckupController;
 use App\Http\Controllers\Editor\PregnantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +25,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user/login', function (Request $request) {
-    return $request->user();
+    $user =  $request->user();
+
+    $user->roles;
+
+    return $user;
 });
 
 Route::get('login', function() {
@@ -30,6 +37,7 @@ Route::get('login', function() {
 })->name('login');
 
 Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 Route::name('admin')
         ->middleware(['auth:sanctum', 'role:admin'])
@@ -40,6 +48,10 @@ Route::name('admin')
         });
 Route::middleware(['auth:sanctum'])->group( function () {
     Route::resource('data-anak', ChildController::class);
+    Route::resource('checkup-child', ChildCheckup::class);
     Route::resource('posyandu', Posyandu::class);
     Route::resource('pregnant', PregnantController::class);
+    Route::resource('checkup', CheckupController::class);
+    Route::get('child-chart', [ChartController::class, 'childChart']);
+    Route::get('total-chart', [ChartController::class, 'total']);
 });

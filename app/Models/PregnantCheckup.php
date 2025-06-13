@@ -9,7 +9,13 @@ class PregnantCheckup extends Model
 {
     use HasFactory;
 
-    protected $guaded = [];
+    protected $fillable = [
+        'pregnant_id',
+        'date',
+        'result',
+        'notes',
+        'medicine'
+    ];
 
     public function pregnant()
     {

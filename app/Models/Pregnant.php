@@ -18,6 +18,6 @@ class Pregnant extends Model
 
     public function checkups()
     {
-        return $this->hasMany(Posyandu::class);
+        return $this->hasMany(PregnantCheckup::class);
     }
 }

@@ -15,15 +15,15 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permission = Cache::remember('permissions', now()->addMinutes(5), function() {
+
+        $permission = Cache::remember('permissions', now()->addMinutes(5), function () {
             return Permission::all();
         });
 
-
-        if($permission) {
+        if ($permission->isNotEmpty()) {
             return $this->httpResponse(true, 'Success', $permission, 200);
         } else {
-            return $this->httpResponse(false, 'Data not found', '', 404);
+            return $this->httpResponse(false, 'Data not found', [], 404);
         }
     }
 

@@ -16,8 +16,15 @@ class PosyanduFactory extends Factory
      */
     public function definition(): array
     {
+
+        $data = [
+                'Bumi Jambu', 
+                'Ranga Ranga'
+        ];
+
+        
         return [
-            'name' => $this->faker->randomElement(['Bumi Jambu', 'Ranga Ranga']),
+            'name' => $this->faker->randomElement($data),
             'alamat' => $this->faker->randomElement(['Dusun 1', 'Dusun 3']),
             'deskripsi' => fake()->sentence(5)
         ];
