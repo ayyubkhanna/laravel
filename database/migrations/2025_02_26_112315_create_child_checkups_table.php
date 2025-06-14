@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('child_checkups', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('child_id');
             $table->date('date');
             $table->integer('length_body');
             $table->integer('weight');
+            $table->integer('age');
+            $table->boolean('stunting');
+            $table->json('imunisasi');
             $table->timestamps();
+
+            $table->foreign('child_id')->on('children')->references('id')->onDelete('cascade');
         });
     }
 

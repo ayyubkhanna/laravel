@@ -33,7 +33,7 @@ class ChildController extends Controller
                         return $query->where('posyandu_id', $filter);
 
                 })
-                ->when($search, function ($query) use ($search, $filter) {
+                ->when($search, function ($query) use ($search) {
                     return $query->where(function ($q) use ($search) {
                         $q->where('name', 'like', "%$search%")
                         ->orWhere('kia', 'like', "%$search%")

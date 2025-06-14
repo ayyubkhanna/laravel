@@ -61,4 +61,12 @@ class AuthController extends Controller
             'message' => 'Logout berhasil'
         ], 200);
     }
+
+    public function unauthorize()
+    {
+        return response()->json([
+            'status' => false,
+            'message' => 'Unauthorize',
+        ], 403);
+    }
 }

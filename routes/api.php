@@ -10,6 +10,7 @@ use App\Http\Controllers\Editor\ChildController;
 use App\Http\Controllers\Editor\Posyandu;
 use App\Http\Controllers\Editor\Pregnant\CheckupController;
 use App\Http\Controllers\Editor\PregnantController;
+use App\Http\Controllers\Editor\StuntingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,7 @@ Route::get('login', function() {
 })->name('login');
 
 Route::post('login', [AuthController::class, 'login']);
+Route::get('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 Route::name('admin')
@@ -49,6 +51,7 @@ Route::name('admin')
 Route::middleware(['auth:sanctum'])->group( function () {
     Route::resource('data-anak', ChildController::class);
     Route::resource('checkup-child', ChildCheckup::class);
+    Route::resource('stunting', StuntingController::class);
     Route::resource('posyandu', Posyandu::class);
     Route::resource('pregnant', PregnantController::class);
     Route::resource('checkup', CheckupController::class);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Editor\Child;
 
 use App\Http\Controllers\Controller;
+use App\Models\Stunting;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -86,6 +87,13 @@ class ChildCheckup extends Controller
                     'stunting' => $isStunted,
                     'imunisasi' => $request->imunisasi
                 ]);
+
+                if($isStunted) {
+                    Stunting::create([
+                        'child_id' => $request->child_id,
+                        'checkupchild_id' => $data->id,
+                    ]);
+                }
 
                 Cache::tags(['children'])->flush();
     
