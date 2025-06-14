@@ -16,13 +16,8 @@ class Posyandu extends Model
     //     return $this->hasMany(Pregnant::class);
     // }
 
-    public function children()
+    public function person()
     {
-        return $this->hasMany(Child::class);
-    }
-
-    public function pregnant()
-    {
-        return $this->hasMany(Pregnant::class);
+        return $this->hasMany(Person::class);
     }
 }

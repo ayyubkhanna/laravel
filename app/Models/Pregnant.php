@@ -11,9 +11,9 @@ class Pregnant extends Model
 
     protected $guarded = [];
 
-    public function posyandu()
+    public function person()
     {
-        return $this->belongsTo(Posyandu::class);
+        return $this->belongsTo(Person::class);
     }
 
     public function checkups()

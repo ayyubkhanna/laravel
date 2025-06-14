@@ -11,18 +11,13 @@ class Child extends Model
 
     protected $guarded = [];
 
-    public function posyandu()
+    public function person()
     {
-        return $this->belongsTo(Posyandu::class);
+        return $this->belongsTo(Person::class);
     }
 
     public function checkup ()
     {
         return $this->hasMany(ChildCheckup::class);
-    }
-
-    public function stunting ()
-    {
-        return $this->hasOne(Stunting::class);
     }
 }
