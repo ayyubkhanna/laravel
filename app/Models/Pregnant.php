@@ -13,7 +13,7 @@ class Pregnant extends Model
 
     public function person()
     {
-        return $this->belongsTo(Person::class);
+        return $this->belongsTo(Person::class, 'people_id');
     }
 
     public function checkups()

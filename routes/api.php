@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\Editor\Child\ChildCheckup;
 use App\Http\Controllers\Editor\ChildController;
+use App\Http\Controllers\Editor\PersonController;
 use App\Http\Controllers\Editor\Posyandu;
 use App\Http\Controllers\Editor\Pregnant\CheckupController;
 use App\Http\Controllers\Editor\PregnantController;
@@ -55,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group( function () {
     Route::resource('posyandu', Posyandu::class);
     Route::resource('pregnant', PregnantController::class);
     Route::resource('checkup', CheckupController::class);
+    Route::resource('person', PersonController::class);
     Route::get('child-chart', [ChartController::class, 'childChart']);
     Route::get('total-chart', [ChartController::class, 'total']);
 });

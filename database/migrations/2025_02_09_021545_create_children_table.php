@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('people_id');
             $table->string('kia');
-            $table->string('nik');
             $table->string('orang_tua');
             $table->timestamps();
 

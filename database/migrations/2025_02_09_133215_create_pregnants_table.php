@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('awal_kehamilan');
             $table->string('perkiraan_hamil');
             $table->string('nama_suami');
+            $table->enum('status', ['aktif', 'melahirkan', 'selesai'])->default('aktif');
             $table->timestamps();
 
             $table->foreign('people_id')->references('id')->on('people')->onDelete('cascade');

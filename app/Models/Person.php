@@ -13,12 +13,12 @@ class Person extends Model
 
     public function child()
     {
-        return $this->hasOne(Person::class);
+        return $this->hasOne(Person::class, 'people_id');
     }
 
     public function pregnant()
     {
-        return $this->hasOne(Pregnant::class);
+        return $this->hasOne(Pregnant::class, 'people_id')->where('status', 'aktif');
     }
 
     public function posyandu()
