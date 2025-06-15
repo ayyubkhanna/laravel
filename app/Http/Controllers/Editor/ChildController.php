@@ -33,7 +33,6 @@ class ChildController extends Controller
                 $validator = Validator::make($request->all(), [
                     'people_id' => 'required|integer',
                     'kia' => 'required|integer',
-                    'nik' => 'required|integer',
                     'orang_tua' => 'required',
                 ]);
 
@@ -46,7 +45,6 @@ class ChildController extends Controller
                 $children = Child::create([
                     'people_id' => $person->id,
                     'kia' => $request->kia,
-                    'nik' => $request->nik,
                     'orang_tua' => $request->orang_tua
                 ]);
 
@@ -81,12 +79,9 @@ class ChildController extends Controller
                 $children = Child::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
+                    'people_id' => 'required|integer',
                     'kia' => 'required|integer',
-                    'name' => 'required',
-                    'nik' => 'required|integer',
-                    'alamat' => 'required',
                     'orang_tua' => 'required',
-                    'posyandu_id' => 'required',
                 ]);
 
                 if($validator->fails()){
