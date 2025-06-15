@@ -7,7 +7,6 @@ use App\Models\Child;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +15,7 @@ class ChildController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
        //
     }
@@ -51,6 +50,8 @@ class ChildController extends Controller
                     'kia' => $request->kia,
                     'orang_tua' => $request->orang_tua
                 ]);
+
+                Cache::tags(['children'])->flush();
 
                 return $this->httpResponse(true, 'created success', $children, 201);
 
@@ -93,6 +94,8 @@ class ChildController extends Controller
 
                 $children->update($request->only(['kia', 'orang_tua']));
 
+                Cache::tags(['children'])->flush();
+
                 return $this->httpResponse(true, 'updated success', $children, 200);
 
             } else {
@@ -110,20 +113,6 @@ class ChildController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            if(request()->user()->hasRole('editor') && request()->user()->isAbleTo('children-delete')){
-                $child = Child::findOrFail($id);
-
-                $child->delete();
-
-                return $this->httpResponse(true, 'deleted success', [], 200);
-            } else {
-                return $this->httpResponseError(false, 'you dont have access', [], 403);
-            }
-        } catch (ModelNotFoundException $th) {
-            return $this->httpResponseError(false, 'Data not found', $th->getMessage(), 404);
-        } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
-        }
+       //
     }
 }
