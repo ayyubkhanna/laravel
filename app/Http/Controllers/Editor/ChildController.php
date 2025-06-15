@@ -31,8 +31,8 @@ class ChildController extends Controller
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('children-create')){
 
                 $validator = Validator::make($request->all(), [
-                    'people_id' => 'required|integer',
-                    'kia' => 'required|integer',
+                    'people_id' => 'required|integer|unique:children,people_id|exists:people,id',
+                    'kia' => 'required|integer|unique:children,kia',
                     'orang_tua' => 'required',
                 ]);
 
@@ -41,6 +41,10 @@ class ChildController extends Controller
                 }
 
                 $person = Person::findOrFail($request->people_id);
+
+                if($person->pregnant) {
+                    return $this->httpResponseError(false, 'data ini sudah mendapat status hamil aktif', [], 400);
+                }
 
                 $children = Child::create([
                     'people_id' => $person->id,
@@ -79,16 +83,15 @@ class ChildController extends Controller
                 $children = Child::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
-                    'people_id' => 'required|integer',
-                    'kia' => 'required|integer',
-                    'orang_tua' => 'required',
+                    'kia' => 'nullable|integer',
+                    'orang_tua' => 'nullable',
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $children->update($request->all());
+                $children->update($request->only(['kia', 'orang_tua']));
 
                 return $this->httpResponse(true, 'updated success', $children, 200);
 

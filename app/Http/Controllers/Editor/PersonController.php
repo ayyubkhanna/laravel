@@ -37,27 +37,22 @@ class PersonController extends Controller
                             $q->where('name', 'like', "%$search%")
                             ->orWhere('nik', 'like', "%$search%");
 
+                        })
+                        ->orWhereHas('child', function ($q) use ($search) {
+                            $q->where('kia', 'like', "%$search%");
+                        })->orWhereHas('pregnant', function ($q) use ($search) {
+                            $q->where('nik', 'like', "%$search%");
                         });
-                    })->orWhereHas('child', function ($q) use ($search) {
-                        $q->where('kia', 'like', "%$search%");
-                    })->orWhereHas('preagnant', function ($q) use ($search) {
-                        $q->where('nik', 'like', "%$search%");
                     })
                     ->paginate($entries);
 
                 Cache::tags(['children'])->put('children', $children, now()->addMinutes(5));
 
-
-                if(request()->user()->hasRole(['admin', 'editor']) || request()->user()->isAbleTo('children-read', $children)) {
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'Success',
-                        'data' => $children
-                    ], 200);
-                } else {
-                    return $this->httpResponse(false, 'Anda tidak punya akses untuk melakukan ini', '', 403);
-                }
-
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Success',
+                    'data' => $children
+                ], 200);
             } else {
                 return $this->httpResponse(false, 'you dont have access', [], 403);
             }
