@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Editor\Child;
 
 use App\Http\Controllers\Controller;
+use App\Models\Child;
 use App\Models\Stunting;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -39,14 +40,7 @@ class ChildCheckup extends Controller
      */
     public function index()
     {
-        $checkup = \App\Models\ChildCheckup::all();
-
-        if($checkup) {
-            return $this->httpResponse(true, 'Success', $checkup, 200);
-        } else {
-            return $this->httpResponseError(false, 'Data not found', [], 404);
-        }
-        
+        //   
     }
 
     /**
@@ -57,7 +51,7 @@ class ChildCheckup extends Controller
         try {
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-create')) {
                 $validator = Validator::make($request->all(), [
-                    'child_id' => 'required',
+                    'child_id' => 'required|unique:child_checkups,child_id|exists:children,id',
                     'date' => 'required|date',
                     'age' => 'required|integer',
                     'length_body' => 'required|integer',
@@ -77,9 +71,11 @@ class ChildCheckup extends Controller
 
                 // Menentukan apakah anak terindikasi stunting
                 $isStunted = $zScore < -2;
+
+                $children = Child::findOrFail($request->child_id);
     
                 $data = \App\Models\ChildCheckup::create([
-                    'child_id' => $request->child_id,
+                    'child_id' => $children->id,
                     'date' =>$request->date,
                     'age' => $request->age,
                     'length_body' => $request->length_body,
@@ -101,21 +97,6 @@ class ChildCheckup extends Controller
             } else {
                 return $this->httpResponseError(false, 'You dont have access', [], 403);
             }
-        } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
-        }
-        
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        try {
-            $checkup = \App\Models\ChildCheckup::findOrFail($id);
-
-            return $this->httpResponse(true, 'Success', $checkup, 200);
         } catch (ModelNotFoundException $e) {
             return $this->httpResponseError(false, 'Data not found', $e->getMessage(), 404);
         } catch (\Throwable $th) {
@@ -124,26 +105,34 @@ class ChildCheckup extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
        try {
-            if(request()->user()->hasRole('editor') && request()->user()->isAbleTo('checkup-child-update')) {
+            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-update')) {
 
                 $checkup = \App\Models\ChildCheckup::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
-                    'child_id' => 'required',
-                    'length_body' => 'required|integer',
-                    'weight' => 'required|integer'
+                    'length_body' => 'nullable|integer',
+                    'weight' => 'nullable|integer',
+                    'imunisasi' => 'nullable|array'
                 ]);
     
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'Validation Error', $validator->errors(), 422);
                 }
 
-                $checkup->update($request->only(['child_id', 'length_body', 'weight']));
+                $checkup->update($request->only(['length_body', 'weight', 'imunisasi']));
     
                 return $this->httpResponse(true, 'Created Successfully', $checkup, 200);
             } else {

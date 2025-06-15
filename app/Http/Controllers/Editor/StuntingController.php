@@ -21,7 +21,7 @@ class StuntingController extends Controller
             //throw $th;
         }
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
