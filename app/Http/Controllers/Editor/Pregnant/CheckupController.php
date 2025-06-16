@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Editor\Pregnant;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pregnant;
 use App\Models\PregnantCheckup;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -16,24 +17,7 @@ class CheckupController extends Controller
      */
     public function index()
     {
-        try {
-            $cacheVersion = Cache::get('checkups_version', 1);
-            $checkups = Cache::remember($cacheVersion, now()->addMinutes(5), function () {
-                PregnantCheckup::all();
-            });
-
-            if($checkups) {
-                Cache::tags(['pregnant_checkups'])->put('pregnants', $checkups, now()->addMinutes(5));
-
-                return $this->httpResponse(true, 'Success', $checkups, 200);
-
-            } else {
-                return $this->httpResponse(false, 'Data not found', '', 404);
-            }
-            
-        } catch (\Throwable $th) {
-            return $this->httpResponse(false, 'Error', $th->getMessage(), $th->getCode());
-        }
+       //
     }
 
     /**
@@ -44,32 +28,37 @@ class CheckupController extends Controller
         try {
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-pregnant-create')) {
                 $validator = Validator::make($request->all(), [
-                    'date' => ['required', 'date'],
-                    'result' => ['required'],
-                    'notes' => ['nullable'],
-                    'medicine' => ['nullable']
+                    'pregnant_id' => 'required|exists:pregnants,id',
+                    'date' => 'required|date',
+                    'result' => 'required',
+                    'notes' => 'nullable',
+                    'medicine' => 'nullable'
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponse(false, 'Failed validation', $validator->getMessageBag(), 422);
                 }
-                Cache::tags(['pregnant_checkups'])->flush();
 
+                $pregnant = Pregnant::findOrFail($request->pregnant_id);
+                
                 $checkup = PregnantCheckup::create([
-                    'pregnant_id' => $request->pregnant_id,
+                    'pregnant_id' => $pregnant->id,
                     'date' => $request->date,
                     'result' => $request->result,
                     'notes' => $request->notes,
                     'medicine' => $request->medicine
                 ]);
-
+                
+                Cache::tags(['pregnant_checkups'])->flush();
 
                 return $this->httpResponse(true, 'Created success', $checkup, 201);
             } else {
                 return $this->httpResponse(false, 'You dont have access', '', 403);
             }
+        } catch (ModelNotFoundException $e) {
+            return $this->httpResponseError(false, 'Data not found', $e->getMessage(), 404);
         } catch (\Throwable $th) {
-            return $this->httpResponse(false, 'Error', $th->getMessage(), 500);
+            return $this->httpResponseError(false, 'ERROR', $th->getMessage(), 500);
         }
     }
 
@@ -78,16 +67,7 @@ class CheckupController extends Controller
      */
     public function show(string $id)
     {
-        try {
-            $checkup = PregnantCheckup::findOrFail($id);
-            
-            return $this->httpResponse(true, 'success', $checkup, 200);
-        } catch (ModelNotFoundException $e) {
-            return $this->httpResponseError(false, "Data not found", $e->getMessage(), 404);
-        } catch (\Throwable $th) {
-            return $this->httpResponseError(false, "Error", $th->getMessage(), 500);
-        }
-        
+        //   
     }
 
     /**
@@ -101,17 +81,17 @@ class CheckupController extends Controller
                 $checkup = PregnantCheckup::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
-                    'date' => ['required', 'date'],
-                    'result' => ['required'],
-                    'notes' => ['nullable'],
-                    'medicine' => ['nullable']
+                    'date' => 'nullable|date',
+                    'result' => 'nullable',
+                    'notes' => 'nullable',
+                    'medicine' => 'nullable'
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponse(false, 'Failed validation', $validator->getMessageBag(), 422);
                 }
 
-                $checkup->update($request->all());
+                $checkup->update($request->only(['date', 'result', 'notes', 'medicine']));
 
                 Cache::tags(['pregnant_checkups'])->flush();
 

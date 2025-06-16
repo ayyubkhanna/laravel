@@ -86,7 +86,6 @@ class ChildCheckup extends Controller
 
                 if($isStunted) {
                     Stunting::create([
-                        'child_id' => $request->child_id,
                         'checkupchild_id' => $data->id,
                     ]);
                 }
@@ -100,7 +99,7 @@ class ChildCheckup extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->httpResponseError(false, 'Data not found', $e->getMessage(), 404);
         } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'ERROR', $e->getMessage(), 500);
+            return $this->httpResponseError(false, 'ERROR', $th->getMessage(), 500);
         }
     }
 
@@ -123,6 +122,8 @@ class ChildCheckup extends Controller
                 $checkup = \App\Models\ChildCheckup::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
+                    'date' => 'nullable|date',
+                    'age' => 'nullable|integer',
                     'length_body' => 'nullable|integer',
                     'weight' => 'nullable|integer',
                     'imunisasi' => 'nullable|array'
@@ -132,16 +133,16 @@ class ChildCheckup extends Controller
                     return $this->httpResponseError(false, 'Validation Error', $validator->errors(), 422);
                 }
 
-                $checkup->update($request->only(['length_body', 'weight', 'imunisasi']));
+                $checkup->update($request->only(['date', 'age','length_body', 'weight', 'imunisasi']));
     
-                return $this->httpResponse(true, 'Created Successfully', $checkup, 200);
+                return $this->httpResponse(true, 'Updated Successfully', $checkup, 200);
             } else {
                 return $this->httpResponseError(false, 'You dont have access', [], 403);
             }
         } catch (ModelNotFoundException $e) {
             return $this->httpResponseError(false, 'Data not found', $e->getMessage(), 404);
         } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'ERROR', $e->getMessage(), 500);
+            return $this->httpResponseError(false, 'ERROR', $th->getMessage(), 500);
         }
     }
 
