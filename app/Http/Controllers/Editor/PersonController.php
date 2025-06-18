@@ -22,6 +22,8 @@ class PersonController extends Controller
 
             if($request->user()->hasRole(['editor', 'admin']) || $request->user()->isAbleTo('index-person')) {
 
+                $status = $request->query('status');
+
                 $entries = $request->query('entries', 10);
 
                 $search = $request->query('pencarian');
@@ -31,6 +33,12 @@ class PersonController extends Controller
                 $children =  Person::with(['child', 'pregnant'])
                     ->when($filter, function ($query) use ($filter) {
                             return $query->where('posyandu_id', $filter);
+                    })
+                    ->when($status === 'child', function ($query)  {
+                        return $query->whereHas('child');
+                    })
+                    ->when($status === 'pregnant', function ($query)  {
+                        return $query->whereHas('pregnant');
                     })
                     ->when($search, function ($query) use ($search) {
                         return $query->where(function ($q) use ($search) {
