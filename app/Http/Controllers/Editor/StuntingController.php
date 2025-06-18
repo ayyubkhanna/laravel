@@ -14,11 +14,25 @@ class StuntingController extends Controller
     public function index(Request $request)
     {
         try {
-            $stunting = Stunting::with('child')->get();
+            if($request->user()->hasRole(['admin', 'editor']) || $request->user()->isAbleTo('read-stunting')) {
+                $stunting = Stunting::with('childcheckup.child')
+                            ->where('status', 'aktif')
+                            ->join('child_checkups', 'child_checkups.id', '=', 'stuntings.checkupchild_id')
+                            ->orderByDesc('child_checkups.date')
+                            ->select('stuntings.*')
+                            ->get();
+    
+                if(!$stunting) {
+                    return $this->httpResponseError(false, 'data not found', [], 404);
+                }
+                
+                return $this->httpResponse(true, 'success', $stunting, 200);
+            } else {
+                return $this->httpResponseError(false, 'you dont have access', [], 403);
 
-            return $this->httpResponse(true, 'success', $stunting, 200);
+            }
         } catch (\Throwable $th) {
-            //throw $th;
+            return $this->httpResponseError(false, 'ERROR', $th->getMessage(), 500);
         }
     }
     
@@ -35,7 +49,24 @@ class StuntingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            if(request()->user()->hasRole(['admin', 'editor']) || request()->user()->isAbleTo('read-stunting')) {
+                $stunting = Stunting::with('childcheckup.child')
+                            ->where('id', $id)
+                            ->get();
+    
+                if(!$stunting) {
+                    return $this->httpResponseError(false, 'data not found', [], 404);
+                }
+                
+                return $this->httpResponse(true, 'success', $stunting, 200);
+            } else {
+                return $this->httpResponseError(false, 'you dont have access', [], 403);
+
+            }
+        } catch (\Throwable $th) {
+            return $this->httpResponseError(false, 'ERROR', $th->getMessage(), 500);
+        }
     }
 
     /**

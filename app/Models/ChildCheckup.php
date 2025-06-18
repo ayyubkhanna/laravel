@@ -19,10 +19,9 @@ class ChildCheckup extends Model
     {
         return $this->belongsTo(Child::class);
     }
-
     public function stunting()
     {
-        return $this->hasOne(Stunting::class);
+        return $this->hasOne(Stunting::class, 'checkupchild_id');
     }
     
 }

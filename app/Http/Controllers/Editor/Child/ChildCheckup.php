@@ -51,7 +51,7 @@ class ChildCheckup extends Controller
         try {
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-create')) {
                 $validator = Validator::make($request->all(), [
-                    'child_id' => 'required|unique:child_checkups,child_id|exists:children,id',
+                    'child_id' => 'required|exists:children,id',
                     'date' => 'required|date',
                     'age' => 'required|integer',
                     'length_body' => 'required|integer',
@@ -84,11 +84,10 @@ class ChildCheckup extends Controller
                     'imunisasi' => $request->imunisasi
                 ]);
 
-                if($isStunted) {
-                    Stunting::create([
-                        'checkupchild_id' => $data->id,
-                    ]);
-                }
+                Stunting::create([
+                    'status' => $isStunted ? 'aktif':'tidak_aktif',
+                    'checkupchild_id' => $data->id,
+                ]);
 
                 Cache::tags(['children'])->flush();
     
@@ -119,7 +118,7 @@ class ChildCheckup extends Controller
        try {
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-update')) {
 
-                $checkup = \App\Models\ChildCheckup::findOrFail($id);
+                $checkup = \App\Models\ChildCheckup::where('id', $id)->with('stunting')->firstOrFail();
 
                 $validator = Validator::make($request->all(), [
                     'date' => 'nullable|date',
@@ -133,7 +132,22 @@ class ChildCheckup extends Controller
                     return $this->httpResponseError(false, 'Validation Error', $validator->errors(), 422);
                 }
 
+                $growthData = $this->getGrowthData($request->age);
+                $averageHeight = $growthData['averageHeight'];
+                $standardDeviation = $growthData['standardDeviation'];
+
+                $zScore = ($request->length_body - $averageHeight) / $standardDeviation;
+
+                // Menentukan apakah anak terindikasi stunting
+                $isStunted = $zScore < -2;
+
                 $checkup->update($request->only(['date', 'age','length_body', 'weight', 'imunisasi']));
+
+                $checkup->stunting()->update([
+                    'status' => $isStunted ? 'aktif' : 'tidak_aktif'
+                ]);
+
+                $checkup->load('stunting');
     
                 return $this->httpResponse(true, 'Updated Successfully', $checkup, 200);
             } else {
