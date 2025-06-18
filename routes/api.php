@@ -34,10 +34,6 @@ Route::middleware('auth:sanctum')->get('/user/login', function (Request $request
     return $user;
 });
 
-Route::get('login', function() {
-    return 'Unauthorized';
-})->name('login');
-
 Route::post('login', [AuthController::class, 'login']);
 Route::get('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
