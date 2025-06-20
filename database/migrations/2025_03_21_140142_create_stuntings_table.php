@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('stuntings', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['aktif', 'tidak_aktif']);
-            $table->unsignedBigInteger('checkupchildId');
+            $table->unsignedBigInteger('weightId');
             $table->timestamps();
 
-            $table->foreign('checkupchildId')->on('child_checkups')->references('id')->onDelete('cascade');
+            $table->foreign('weightId')->on('weighings')->references('id')->onDelete('cascade');
         });
     }
 

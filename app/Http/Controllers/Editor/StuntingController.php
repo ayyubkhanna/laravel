@@ -15,12 +15,10 @@ class StuntingController extends Controller
     {
         try {
             if($request->user()->hasRole(['admin', 'editor']) || $request->user()->isAbleTo('read-stunting')) {
-                $stunting = Stunting::with('childcheckup.child')
-                            ->where('status', 'aktif')
-                            ->join('child_checkups', 'child_checkups.id', '=', 'stuntings.checkupchild_id')
-                            ->orderByDesc('child_checkups.date')
-                            ->select('stuntings.*')
-                            ->get();
+                $stunting = Stunting::with(['weighings' => fn($query) => $query->orderByDesc('date'), 'weighings.child.pregnant'])
+                ->where('status', 'aktif')
+                ->get();
+            
     
                 if(!$stunting) {
                     return $this->httpResponseError(false, 'data not found', [], 404);

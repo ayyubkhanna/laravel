@@ -18,11 +18,11 @@ class Child extends Model
 
     public function pregnant()
     {
-        return $this->belongsTo(Pregnant::class);
+        return $this->belongsTo(Pregnant::class, 'motherId');
     }
 
-    public function checkups ()
+    public function weighings ()
     {
-        return $this->hasMany(ChildCheckup::class, 'childId');
+        return $this->hasMany(Weighing::class, 'childId');
     }
 }

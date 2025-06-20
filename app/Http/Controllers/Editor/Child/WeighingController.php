@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Editor\Child;
 use App\Http\Controllers\Controller;
 use App\Models\Child;
 use App\Models\Stunting;
+use App\Models\Weighing;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class ChildCheckup extends Controller
+class WeighingController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
 
     public function getGrowthData($age)
     {
@@ -35,12 +40,9 @@ class ChildCheckup extends Controller
         return $growthData[$closestAge] ?? ['averageHeight' => 0, 'standardDeviation' => 0];
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //   
+        //
     }
 
     /**
@@ -49,16 +51,16 @@ class ChildCheckup extends Controller
     public function store(Request $request)
     {
         try {
-            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-create')) {
+            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('weighing-create')) {
                 $validator = Validator::make($request->all(), [
-                    'child_id' => 'required|exists:children,id',
+                    'childId' => 'required|exists:children,id',
                     'date' => 'required|date',
                     'age' => 'required|integer',
-                    'length_body' => 'required|integer',
-                    'weight' => 'required|integer',
-                    'imunisasi' => 'required|array',
+                    'bodyWeight' => 'required|integer',
+                    'bodyHeight' => 'required|integer',
+                    'information' => 'nullable|string'
                 ]);
-    
+
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'Validation Error', $validator->errors(), 422);
                 }
@@ -72,25 +74,34 @@ class ChildCheckup extends Controller
                 // Menentukan apakah anak terindikasi stunting
                 $isStunted = $zScore < -2;
 
-                $children = Child::findOrFail($request->child_id);
-    
-                $data = \App\Models\ChildCheckup::create([
-                    'child_id' => $children->id,
-                    'date' =>$request->date,
-                    'age' => $request->age,
-                    'length_body' => $request->length_body,
-                    'weight' => $request->weight,
-                    'stunting' => $isStunted,
-                    'imunisasi' => $request->imunisasi
-                ]);
+                $children = Child::findOrFail($request->childId);
 
-                Stunting::create([
-                    'status' => $isStunted ? 'aktif':'tidak_aktif',
-                    'checkupchild_id' => $data->id,
-                ]);
+                $data = collect();
+
+                // menangani jika stunting bermasalah maka checkup jangan sampe tersimpan didatabase
+                DB::transaction(function () use ($children, $request, $isStunted, $data) {
+
+                    // simpan data checkup
+                    $collect = $children->weighings()->create([
+                        'date' =>$request->date,
+                        'age' => $request->age,
+                        'bodyWeight' => $request->bodyWeight,
+                        'bodyHeight' => $request->bodyHeight,
+                        'information' => $request->information
+                    ]);
+
+                    // simpan data stunting
+                    Stunting::create([
+                        'status' => $isStunted ? 'aktif':'tidak_aktif',
+                        'weightId' => $collect->id,
+                    ]);
+
+                    $data->push($collect);
+
+                });
 
                 Cache::tags(['children'])->flush();
-    
+
                 return $this->httpResponse(true, 'Created Successfully', $data, 201);
             } else {
                 return $this->httpResponseError(false, 'You dont have access', [], 403);
@@ -115,19 +126,19 @@ class ChildCheckup extends Controller
      */
     public function update(Request $request, string $id)
     {
-       try {
-            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-update')) {
+        try {
+            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('weighing-update')) {
 
-                $checkup = \App\Models\ChildCheckup::where('id', $id)->with('stunting')->firstOrFail();
+                $data = Weighing::where('id', $id)->with('stunting')->firstOrFail();
 
                 $validator = Validator::make($request->all(), [
-                    'date' => 'nullable|date',
-                    'age' => 'nullable|integer',
-                    'length_body' => 'nullable|integer',
-                    'weight' => 'nullable|integer',
-                    'imunisasi' => 'nullable|array'
+                    'date' => 'required|date',
+                    'age' => 'required|integer',
+                    'bodyWeight' => 'required|integer',
+                    'bodyHeight' => 'required|integer',
+                    'information' => 'nullable|string'
                 ]);
-    
+
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'Validation Error', $validator->errors(), 422);
                 }
@@ -141,15 +152,15 @@ class ChildCheckup extends Controller
                 // Menentukan apakah anak terindikasi stunting
                 $isStunted = $zScore < -2;
 
-                $checkup->update($request->only(['date', 'age','length_body', 'weight', 'imunisasi']));
+                $data->update($request->only(['date', 'age','bodyWeight', 'bodyHeight', 'information']));
 
-                $checkup->stunting()->update([
+                $data->stunting()->update([
                     'status' => $isStunted ? 'aktif' : 'tidak_aktif'
                 ]);
 
-                $checkup->load('stunting');
-    
-                return $this->httpResponse(true, 'Updated Successfully', $checkup, 200);
+                $data->load('stunting');
+
+                return $this->httpResponse(true, 'Updated Successfully', $data, 200);
             } else {
                 return $this->httpResponseError(false, 'You dont have access', [], 403);
             }
@@ -166,9 +177,9 @@ class ChildCheckup extends Controller
     public function destroy(string $id)
     {
         try {
-            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('checkup-child-delete')) {
-                $checkup = \App\Models\ChildCheckup:: find($id);
-                $checkup->delete();
+            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('weighing-delete')) {
+                $weighing = Weighing:: find($id);
+                $weighing->delete();
 
                 Cache::tags(['child_checkups'])->flush();
                 return $this->httpResponse(true, 'Deleted success', [], 200);

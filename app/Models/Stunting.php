@@ -11,8 +11,8 @@ class Stunting extends Model
 
     protected $guarded = [];
 
-    public function childcheckup()
+    public function weighings()
     {
-        return $this->belongsTo(ChildCheckup::class, 'checkupchild_id');
+        return $this->belongsTo(Weighing::class, 'weightId');
     }
 }

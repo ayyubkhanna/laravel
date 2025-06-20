@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('child_checkups', function (Blueprint $table) {
+        Schema::create('weighings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('childId');
             $table->date('date');
-            $table->integer('length_body');
-            $table->integer('weight');
             $table->integer('age');
-            $table->boolean('stunting');
-            $table->json('imunisasi');
+            $table->integer('bodyWeight');
+            $table->integer('bodyHeight');
+            $table->string('information');
             $table->timestamps();
-
-            $table->foreign('childId')->on('children')->references('id')->onDelete('cascade');
         });
     }
 
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('child_checkups');
+        Schema::dropIfExists('weighings');
     }
 };

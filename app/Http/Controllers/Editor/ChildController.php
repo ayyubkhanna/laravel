@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Editor;
 use App\Http\Controllers\Controller;
 use App\Models\Child;
 use App\Models\Person;
+use App\Models\Pregnant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -31,7 +32,7 @@ class ChildController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'peopleId' => 'required|integer|unique:children,peopleId|exists:people,id',
-                    'motherId' => 'required|integer',
+                    'motherId' => 'required|integer|exists:pregnants,id',
                     'numberKia' => 'nullable|integer',
                     'gender' => 'required|in:male,female'
                 ]);
@@ -41,6 +42,7 @@ class ChildController extends Controller
                 }
 
                 $person = Person::findOrFail($request->peopleId);
+                $mother = Pregnant::findOrFail($request->motherId);
 
                 if($person->pregnant) {
                     return $this->httpResponseError(false, 'data ini sudah mendapat status hamil aktif', [], 400);
@@ -48,7 +50,7 @@ class ChildController extends Controller
 
                 $children = Child::create([
                     'peopleId' => $person->id,
-                    'motherId' => $request->motherId,
+                    'motherId' => $mother->id,
                     'numberKia' => $request->numberKia,
                     'gender' => $request->gender
                 ]);
@@ -95,6 +97,8 @@ class ChildController extends Controller
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'validation failed', $validator->getMessageBag(), 422);
                 }
+
+                dd('tes');
 
                 $children->update($request->only(['peopleId', 'motherId', 'kia', 'gender']));
 

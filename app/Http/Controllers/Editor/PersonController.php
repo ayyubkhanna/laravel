@@ -126,7 +126,7 @@ class PersonController extends Controller
             if(request()->user()->hasRole(['editor', 'admin']) || request()->user()->isAbleTo('show-person')) {
                 $person = Person::findOrFail($id);
                 $person->load([
-                    'child.pregnant.checkups', 
+                    'child.weighings.stunting', 
                     'pregnant.child.checkups'
                 ]);
 

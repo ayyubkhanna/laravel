@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\Editor\Child\ChildCheckup;
+use App\Http\Controllers\Editor\Child\WeighingController;
 use App\Http\Controllers\Editor\ChildController;
 use App\Http\Controllers\Editor\PersonController;
 use App\Http\Controllers\Editor\Posyandu;
@@ -47,7 +48,7 @@ Route::name('admin')
         });
 Route::middleware(['auth:sanctum'])->group( function () {
     Route::resource('data-anak', ChildController::class);
-    Route::resource('checkup-child', ChildCheckup::class);
+    Route::resource('weighing', WeighingController::class);
     Route::resource('stunting', StuntingController::class);
     Route::resource('posyandu', Posyandu::class);
     Route::resource('pregnant', PregnantController::class);
