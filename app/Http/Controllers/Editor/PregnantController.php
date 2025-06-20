@@ -30,10 +30,10 @@ class PregnantController extends Controller
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('pregnants-create')) {
                 $validator = Validator::make($request->all(), [
                     'people_id' => 'required|integer|unique:pregnants,people_id|exists:people,id',
-                    'nik' => 'required|integer|unique:pregnants,nik',
                     'awal_kehamilan' => 'required|date',
                     'perkiraan_hamil' => 'required|date',
                     'nama_suami' => 'required',
+                    'status' => 'required|in:aktif, melahirkan, selesai'
                 ]);
 
                 if($validator->fails()){
@@ -41,22 +41,22 @@ class PregnantController extends Controller
                 }
 
                 $person = Person::findOrFail($request->people_id);
-
+                
                 if($person->child) {
                     return $this->httpResponseError(false, 'person already status child', [], 400);
                 }
 
                 $pregnant = Pregnant::create([
                     'people_id' => $person->id,
-                    'nik' => $request->nik,
                     'awal_kehamilan' => $request->awal_kehamilan,
                     'perkiraan_hamil' => $request->perkiraan_hamil,
-                    'nama_suami' => $request->nama_suami
+                    'nama_suami' => $request->nama_suami,
+                    'status' => $request->status
                 ]);
 
                 Cache::tags(['pregnants'])->flush();
 
-                return $this->httpResponse(true, 'Created success', $pregnant, 200);
+                return $this->httpResponse(true, 'Created success', $pregnant, 201);
             } else {
                 return $this->httpResponseError(false, 'You dont have access', '', 403);
             }
@@ -90,17 +90,17 @@ class PregnantController extends Controller
                 }
 
                 $validator = Validator::make($request->all(), [
-                    'nik' => 'nullable|integer',
-                    'awal_kehamilan' => 'nullable|date',
-                    'perkiraan_hamil' => 'nullable|date',
-                    'nama_suami' => 'nullable',
+                    'awal_kehamilan' => 'required|date',
+                    'perkiraan_hamil' => 'required|date',
+                    'nama_suami' => 'required',
+                    'status' => 'required|in:aktif, melahirkan, selesai'
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $pregnant->update($request->only(['nik', 'awal_kehamilan', 'perkiraan_hamil', 'nama_suami']));
+                $pregnant->update($request->only(['awal_kehamilan', 'perkiraan_hamil', 'nama_suami', 'status']));
 
                 Cache::tags(['pregnants'])->flush();
 

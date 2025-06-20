@@ -13,7 +13,7 @@ class Person extends Model
 
     public function child()
     {
-        return $this->hasOne(Child::class, 'people_id');
+        return $this->hasOne(Child::class, 'peopleId');
     }
 
     public function pregnant()

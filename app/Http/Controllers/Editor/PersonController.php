@@ -84,7 +84,7 @@ class PersonController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string',
-                    'nik' => 'nullable|digits:16',
+                    'nik' => 'nullable|digits:16|unique:children,nik',
                     'placeOfBirth' => 'required|string',
                     'dateOfBirth' => 'required|date',
                     'address' => 'required',

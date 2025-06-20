@@ -13,7 +13,12 @@ class Child extends Model
 
     public function person()
     {
-        return $this->belongsTo(Person::class, 'people_id');
+        return $this->belongsTo(Person::class);
+    }
+
+    public function pregnant()
+    {
+        return $this->belongsTo(Pregnant::class);
     }
 
     public function checkups ()
