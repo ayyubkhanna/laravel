@@ -25,4 +25,9 @@ class Child extends Model
     {
         return $this->hasMany(Weighing::class, 'childId');
     }
+
+    public function immunizations ()
+    {
+        return $this->hasMany(Immunization::class, 'childId');
+    }
 }

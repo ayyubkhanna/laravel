@@ -127,6 +127,7 @@ class PersonController extends Controller
                 $person = Person::findOrFail($id);
                 $person->load([
                     'child.weighings.stunting', 
+                    'child.immunizations',
                     'pregnant.child.checkups'
                 ]);
 

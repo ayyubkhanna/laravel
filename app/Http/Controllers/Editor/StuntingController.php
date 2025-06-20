@@ -15,7 +15,7 @@ class StuntingController extends Controller
     {
         try {
             if($request->user()->hasRole(['admin', 'editor']) || $request->user()->isAbleTo('read-stunting')) {
-                $stunting = Stunting::with(['weighings' => fn($query) => $query->orderByDesc('date'), 'weighings.child.pregnant'])
+                $stunting = Stunting::with(['weighings' => fn($query) => $query->orderByDesc('date'), 'weighings.child.pregnant.person'])
                 ->where('status', 'aktif')
                 ->get();
             

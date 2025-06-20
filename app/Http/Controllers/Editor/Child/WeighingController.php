@@ -160,6 +160,8 @@ class WeighingController extends Controller
 
                 $data->load('stunting');
 
+                Cache::tags(['children'])->flush();
+
                 return $this->httpResponse(true, 'Updated Successfully', $data, 200);
             } else {
                 return $this->httpResponseError(false, 'You dont have access', [], 403);
@@ -178,10 +180,13 @@ class WeighingController extends Controller
     {
         try {
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('weighing-delete')) {
+
                 $weighing = Weighing:: find($id);
+
                 $weighing->delete();
 
-                Cache::tags(['child_checkups'])->flush();
+                Cache::tags(['children'])->flush();
+
                 return $this->httpResponse(true, 'Deleted success', [], 200);
             } else {
                 return $this->httpResponseError(false, 'Data not found', [], 404);
