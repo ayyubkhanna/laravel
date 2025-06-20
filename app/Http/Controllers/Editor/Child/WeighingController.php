@@ -58,6 +58,7 @@ class WeighingController extends Controller
                     'age' => 'required|integer',
                     'bodyWeight' => 'required|integer',
                     'bodyHeight' => 'required|integer',
+                    'headCirumference' => 'required|integer',
                     'information' => 'nullable|string'
                 ]);
 
@@ -87,6 +88,7 @@ class WeighingController extends Controller
                         'age' => $request->age,
                         'bodyWeight' => $request->bodyWeight,
                         'bodyHeight' => $request->bodyHeight,
+                        'hc' => $request->headCircumference,
                         'information' => $request->information
                     ]);
 

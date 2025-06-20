@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('age');
             $table->integer('bodyWeight');
             $table->integer('bodyHeight');
+            $table->integer('hc');
             $table->string('information');
             $table->timestamps();
         });
