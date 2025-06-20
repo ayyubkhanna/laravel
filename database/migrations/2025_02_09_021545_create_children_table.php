@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('children', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('people_id');
-            $table->string('kia');
-            $table->string('orang_tua');
+            $table->unsignedBigInteger('peopleId');
+            $table->unsignedBigInteger('motherId');
+            $table->string('numberKia');
+            $table->enum('gender', ['male', 'female']);
             $table->timestamps();
 
-            $table->foreign('people_id')->references('id')->on('people')->onDelete('cascade');
+            $table->foreign('motherId')->references('id')->on('pregnants')->onDelete('cascade');
+            $table->foreign('peopleId')->references('id')->on('people')->onDelete('cascade');
         });
     }
 

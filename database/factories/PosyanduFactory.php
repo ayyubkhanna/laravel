@@ -25,8 +25,8 @@ class PosyanduFactory extends Factory
         
         return [
             'name' => $this->faker->randomElement($data),
-            'alamat' => $this->faker->randomElement(['Dusun 1', 'Dusun 3']),
-            'deskripsi' => fake()->sentence(5)
+            'address' => $this->faker->randomElement(['Dusun 1', 'Dusun 3']),
+            'description' => fake()->sentence(5)
         ];
     }
 }

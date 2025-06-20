@@ -84,10 +84,10 @@ class PersonController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string',
-                    'tempat_lahir' => 'required|string',
-                    'tanggal_lahir' => 'required|date',
-                    'alamat' => 'required',
-                    'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+                    'nik' => 'nullable|digits:16',
+                    'placeOfBirth' => 'required|string',
+                    'dateOfBirth' => 'required|date',
+                    'address' => 'required',
                     'posyandu_id' => 'required|integer'
                 ]);
 
@@ -99,14 +99,14 @@ class PersonController extends Controller
 
                 $persons = Person::create([
                     'name' => $request->name,
-                    'tempat_lahir' => $request->tempat_lahir,
-                    'tanggal_lahir' => $request->tanggal_lahir,
-                    'alamat' => $request->alamat,
-                    'jenis_kelamin' => $request->jenis_kelamin,
+                    'nik' => $request->nik,
+                    'placeOfBirth' => $request->placeOfBirth,
+                    'dateOfBirth' => $request->dateOfBirth,
+                    'address' => $request->address,
                     'posyandu_id' => $posyandu->id
                 ]);
 
-                return $this->httpResponse(true, 'created data', $persons, 201);
+                return $this->httpResponse(true, 'created', $persons, 201);
             } else {
                 return $this->httpResponse(false, 'you dont have access', [], 403);
             }
@@ -152,11 +152,11 @@ class PersonController extends Controller
             if($request->user()->hasRole('editor') || $request->user()->isAbleTo('update-person')) {
 
                 $validator = Validator::make($request->all(), [
-                    'name' => 'required|string',
-                    'tempat_lahir' => 'required|string',
-                    'tanggal_lahir' => 'required|date',
-                    'alamat' => 'required',
-                    'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+                    'name' => 'nullable|string',
+                    'nik' => 'nullable|digits:16',
+                    'placeOfBirth' => 'required|string',
+                    'dateOfBirth' => 'required|date',
+                    'address' => 'required',
                     'posyandu_id' => 'required|integer'
                 ]);
 
@@ -170,10 +170,10 @@ class PersonController extends Controller
 
                 $person->update([
                     'name' => $request->name,
-                    'tempat_lahir' => $request->tempat_lahir,
-                    'tanggal_lahir' => $request->tanggal_lahir,
-                    'alamat' => $request->alamat,
-                    'jenis_kelamin' => $request->jenis_kelamin,
+                    'nik' => $request->nik,
+                    'placeOfBirth' => $request->placeOfBirth,
+                    'dateOfBirth' => $request->dateOfBirth,
+                    'address' => $request->address,
                     'posyandu_id' => $posyandu->id
                 ]);
 

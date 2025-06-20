@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('pregnant_checkups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('pregnant_id');
+            $table->unsignedBigInteger('pregnantId');
             $table->date('date');
             $table->text('result');
             $table->string('notes');
             $table->string('medicine');
             $table->timestamps();
 
-            $table->foreign('pregnant_id')->references('id')->on('pregnants')->onDelete('cascade');
+            $table->foreign('pregnantId')->references('id')->on('pregnants')->onDelete('cascade');
         });
     }
 

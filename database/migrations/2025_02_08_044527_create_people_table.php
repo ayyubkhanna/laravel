@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('people', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('tempat_lahir');
-            $table->date('tanggal_lahir');
-            $table->text('alamat');
-            $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
+            $table->string('nik', 16)->nullable();
+            $table->string('placeOfBirth');
+            $table->date('dateOfBirth');
+            $table->text('address');
             $table->unsignedBigInteger('posyandu_id');
             $table->timestamps();
 

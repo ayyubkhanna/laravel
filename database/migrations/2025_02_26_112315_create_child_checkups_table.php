@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('child_checkups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('child_id');
+            $table->unsignedBigInteger('childId');
             $table->date('date');
             $table->integer('length_body');
             $table->integer('weight');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->json('imunisasi');
             $table->timestamps();
 
-            $table->foreign('child_id')->on('children')->references('id')->onDelete('cascade');
+            $table->foreign('childId')->on('children')->references('id')->onDelete('cascade');
         });
     }
 

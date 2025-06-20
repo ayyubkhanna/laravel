@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('posyandus', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('alamat');
-            $table->string('deskripsi');
+            $table->string('address');
+            $table->string('description');
             $table->timestamps();
         });
     }

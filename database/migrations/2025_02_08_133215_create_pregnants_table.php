@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('pregnants', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('people_id');
-            $table->string('nik');
             $table->string('awal_kehamilan');
             $table->string('perkiraan_hamil');
             $table->string('nama_suami');

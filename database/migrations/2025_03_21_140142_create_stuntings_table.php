@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('stuntings', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['aktif', 'tidak_aktif']);
-            $table->unsignedBigInteger('checkupchild_id');
+            $table->unsignedBigInteger('checkupchildId');
             $table->timestamps();
 
-            $table->foreign('checkupchild_id')->on('child_checkups')->references('id')->onDelete('cascade');
+            $table->foreign('checkupchildId')->on('child_checkups')->references('id')->onDelete('cascade');
         });
     }
 
