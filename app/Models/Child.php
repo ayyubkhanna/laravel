@@ -23,6 +23,6 @@ class Child extends Model
 
     public function checkups ()
     {
-        return $this->hasMany(ChildCheckup::class);
+        return $this->hasMany(ChildCheckup::class, 'childId');
     }
 }

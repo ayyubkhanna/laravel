@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('peopleId');
             $table->unsignedBigInteger('motherId');
-            $table->string('numberKia');
+            $table->string('numberKia')->nullable();
             $table->enum('gender', ['male', 'female']);
             $table->timestamps();
 

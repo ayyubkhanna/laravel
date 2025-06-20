@@ -33,7 +33,7 @@ class PregnantController extends Controller
                     'awal_kehamilan' => 'required|date',
                     'perkiraan_hamil' => 'required|date',
                     'nama_suami' => 'required',
-                    'status' => 'required|in:aktif, melahirkan, selesai'
+                    'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
                 if($validator->fails()){
@@ -93,7 +93,7 @@ class PregnantController extends Controller
                     'awal_kehamilan' => 'required|date',
                     'perkiraan_hamil' => 'required|date',
                     'nama_suami' => 'required',
-                    'status' => 'required|in:aktif, melahirkan, selesai'
+                    'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
                 if($validator->fails()){

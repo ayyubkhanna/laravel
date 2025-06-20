@@ -84,7 +84,7 @@ class PersonController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string',
-                    'nik' => 'nullable|digits:16|unique:children,nik',
+                    'nik' => 'nullable|digits:16|unique:people,nik',
                     'placeOfBirth' => 'required|string',
                     'dateOfBirth' => 'required|date',
                     'address' => 'required',
@@ -126,8 +126,8 @@ class PersonController extends Controller
             if(request()->user()->hasRole(['editor', 'admin']) || request()->user()->isAbleTo('show-person')) {
                 $person = Person::findOrFail($id);
                 $person->load([
-                    'child.checkups', 
-                    'pregnant.checkups'
+                    'child.pregnant.checkups', 
+                    'pregnant.child.checkups'
                 ]);
 
                 return $this->httpResponse(true, 'success', $person, 200);

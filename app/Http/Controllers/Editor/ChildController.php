@@ -30,25 +30,27 @@ class ChildController extends Controller
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('children-create')){
 
                 $validator = Validator::make($request->all(), [
-                    'people_id' => 'required|integer|unique:children,people_id|exists:people,id',
-                    'kia' => 'required|integer|unique:children,kia',
-                    'orang_tua' => 'required',
+                    'peopleId' => 'required|integer|unique:children,peopleId|exists:people,id',
+                    'motherId' => 'required|integer',
+                    'numberKia' => 'nullable|integer',
+                    'gender' => 'required|in:male,female'
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $person = Person::findOrFail($request->people_id);
+                $person = Person::findOrFail($request->peopleId);
 
                 if($person->pregnant) {
                     return $this->httpResponseError(false, 'data ini sudah mendapat status hamil aktif', [], 400);
                 }
 
                 $children = Child::create([
-                    'people_id' => $person->id,
-                    'kia' => $request->kia,
-                    'orang_tua' => $request->orang_tua
+                    'peopleId' => $person->id,
+                    'motherId' => $request->motherId,
+                    'numberKia' => $request->numberKia,
+                    'gender' => $request->gender
                 ]);
 
                 Cache::tags(['children'])->flush();
@@ -84,15 +86,17 @@ class ChildController extends Controller
                 $children = Child::findOrFail($id);
 
                 $validator = Validator::make($request->all(), [
-                    'kia' => 'nullable|integer',
-                    'orang_tua' => 'nullable',
+                    'peopleId' => 'required|integer',
+                    'motherId' => 'required|integer',
+                    'numberKia' => 'nullable|integer',
+                    'gender' => 'required|in:male,female'
                 ]);
 
                 if($validator->fails()){
                     return $this->httpResponseError(false, 'validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $children->update($request->only(['kia', 'orang_tua']));
+                $children->update($request->only(['peopleId', 'motherId', 'kia', 'gender']));
 
                 Cache::tags(['children'])->flush();
 
