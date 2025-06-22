@@ -41,15 +41,15 @@ class ChildController extends Controller
                     return $this->httpResponseError(false, 'validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $person = Person::findOrFail($request->peopleId);
+                $person = Person::where('id',$request->peopleId)->first();
+                
                 $mother = Pregnant::findOrFail($request->motherId);
 
-                if($person->pregnant) {
-                    return $this->httpResponseError(false, 'data ini sudah mendapat status hamil aktif', [], 400);
+                if($person->pregnant->isNotEmpty()) {
+                    return $this->httpResponseError(false, 'data ini sudah mendapat status hamil aktif', "BAD REQUEST", 400);
                 }
 
-                $children = Child::create([
-                    'peopleId' => $person->id,
+                $children = $person->child()->create([
                     'motherId' => $mother->id,
                     'numberKia' => $request->numberKia,
                     'gender' => $request->gender

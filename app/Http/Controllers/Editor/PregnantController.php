@@ -54,14 +54,10 @@ class PregnantController extends Controller
                     return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $person = Person::find($request->peopleId);
+                $person = Person::where('id',$request->peopleId)->first();
                 
-                if(!$person) {
-                    return $this->httpResponseError(false, 'person could not be found', [], 404);
-                }
-                
-                if($person->child) {
-                    return $this->httpResponseError(false, 'person already status child', [], 400);
+                if($person->child->isNotEmpty()) {
+                    return $this->httpResponseError(false, 'person already status child', "BAD REQUEST", 400);
                 }
                 
                 // jika pregnant sudah memiliki status aktif hamil maka kembalikan error
