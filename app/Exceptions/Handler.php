@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -24,7 +26,27 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            
+        });
+
+        // Tangkap error 405 (Method Not Allowed)
+        $this->renderable(function (MethodNotAllowedHttpException $e, $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The HTTP method is not allowed for this endpoint'
+                ], 405);
+            }
+        });
+
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Endpoint could not be found'
+                ], 404);
+            }
         });
     }
+
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\Editor\ChildController;
 use App\Http\Controllers\Editor\PersonController;
 use App\Http\Controllers\Editor\Posyandu;
 use App\Http\Controllers\Editor\Pregnant\CheckupController;
+use App\Http\Controllers\Editor\Pregnant\PrenetalCheckupController;
 use App\Http\Controllers\Editor\PregnantController;
 use App\Http\Controllers\Editor\StuntingController;
 use Illuminate\Http\Request;
@@ -48,13 +49,13 @@ Route::name('admin')
             Route::resource('permission', PermissionController::class);
         });
 Route::middleware(['auth:sanctum'])->group( function () {
-    Route::resource('data-anak', ChildController::class);
-    Route::resource('weighing', WeighingController::class);
-    Route::resource('immunization', ImmunizationController::class);
-    Route::resource('stunting', StuntingController::class);
+    Route::resource('data-anak', ChildController::class)->only(['store', 'update']);;
+    Route::resource('weighing', WeighingController::class)->only(['store', 'update', 'destroy']);;
+    Route::resource('immunization', ImmunizationController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('stunting', StuntingController::class)->only(['index', 'show', 'destroy']);
     Route::resource('posyandu', Posyandu::class);
-    Route::resource('pregnant', PregnantController::class);
-    Route::resource('checkup', CheckupController::class);
+    Route::resource('pregnant', PregnantController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('prenetal-checkup', PrenetalCheckupController::class)->only(['store', 'update', 'show', 'destroy']);
     Route::resource('person', PersonController::class);
     Route::get('child-chart', [ChartController::class, 'childChart']);
     Route::get('total-chart', [ChartController::class, 'total']);

@@ -21,8 +21,8 @@ class Pregnant extends Model
         return $this->hasMany(Child::class, 'motherId');
     }
 
-    public function checkups()
+    public function prenatalCheckups()
     {
-        return $this->hasMany(PregnantCheckup::class);
+        return $this->hasMany(PrenetalCheckup::class, 'pregnantId');
     }
 }
