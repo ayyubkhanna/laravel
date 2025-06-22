@@ -83,7 +83,7 @@ class PrenetalCheckupController extends Controller
                 // cek pregnant id di prenetal checkup
                 $data = PrenetalCheckup::where('pregnantId', $id)->get();
 
-                if(!$data) {
+                if($data->isEmpty()) {
                     return $this->httpResponseError(false, 'checkup pregantn not found', [], 404);
                 }
 

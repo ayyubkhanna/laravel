@@ -15,9 +15,22 @@ class PregnantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            if($request->user()->hasRole(['editor', 'admin']) || $request->user()->isAbleTo('pregnants-create')) {
+                
+                // tampilkan semua pregnant yang aktif
+                $pregnant = Pregnant::with('person')->where('status', 'aktif')->paginate(10);
+
+                return $this->httpResponse(true, 'success', $pregnant, 200);
+            } else {
+
+            }
+        } catch (\Throwable $th) {
+            return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
+            
+        }
     }
 
     /**
@@ -29,10 +42,11 @@ class PregnantController extends Controller
 
             if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('pregnants-create')) {
                 $validator = Validator::make($request->all(), [
-                    'people_id' => 'required|integer|unique:pregnants,people_id|exists:people,id',
-                    'awal_kehamilan' => 'required|date',
-                    'perkiraan_hamil' => 'required|date',
-                    'nama_suami' => 'required',
+                    'peopleId' => 'required|integer|exists:people,id',
+                    'pregnancyStartDate' => 'required|date',
+                    'estimatedDueDate' => 'required|date',
+                    'husbandName' => 'required|string',
+                    'pregnancyNumber' => 'required|integer',
                     'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
@@ -40,17 +54,27 @@ class PregnantController extends Controller
                     return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $person = Person::findOrFail($request->people_id);
+                $person = Person::find($request->peopleId);
+                
+                if(!$person) {
+                    return $this->httpResponseError(false, 'person could not be found', [], 404);
+                }
                 
                 if($person->child) {
                     return $this->httpResponseError(false, 'person already status child', [], 400);
                 }
+                
+                // jika pregnant sudah memiliki status aktif hamil maka kembalikan error
+                if($person->pregnant->firstWhere('status', 'aktif')) {
+                    return $this->httpResponseError(false, 'pregnant already have status active', [], 409);
+                }
 
                 $pregnant = Pregnant::create([
-                    'people_id' => $person->id,
-                    'awal_kehamilan' => $request->awal_kehamilan,
-                    'perkiraan_hamil' => $request->perkiraan_hamil,
-                    'nama_suami' => $request->nama_suami,
+                    'peopleId' => $person->id,
+                    'pregnancyStartDate' => $request->pregnancyStartDate,
+                    'estimatedDueDate' => $request->estimatedDueDate,
+                    'husbandName' => $request->husbandName,
+                    'pregnancyNumber' => $request->pregnancyNumber,
                     'status' => $request->status
                 ]);
 
@@ -60,8 +84,6 @@ class PregnantController extends Controller
             } else {
                 return $this->httpResponseError(false, 'You dont have access', '', 403);
             }
-        } catch (ModelNotFoundException $th) {
-            return $this->httpResponseError(false, 'not found', $th->getMessage(), 404);
         } catch (\Throwable $th) {
             return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
         }
@@ -70,9 +92,22 @@ class PregnantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        try {
+            if($request->user()->hasRole(['editor', 'admin']) || $request->user()->isAbleTo('pregnants-create')) {
+                
+                // tampilkan semua pregnant yang aktif
+                $pregnant = Pregnant::with('person')->where('id', $id)->first();
+
+                return $this->httpResponse(true, 'success', $pregnant, 200);
+            } else {
+
+            }
+        } catch (\Throwable $th) {
+            return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
+            
+        }
     }
 
     /**
@@ -89,10 +124,27 @@ class PregnantController extends Controller
                     return $this->httpResponseError(false, 'not found', [], 404);
                 }
 
+                if($request->has('status') && $request->keys() === ['status']) {
+                    $validator = Validator::make($request->only('status'), [
+                        'status' => 'required|in:aktif,melahirkan,selesai'
+                    ]);
+
+                    if($validator->fails()){
+                        return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
+                    }
+
+                    $pregnant->update($request->only('status'));
+
+                    Cache::tags(['pregnants'])->flush();
+
+                    return $this->httpResponse(true, 'success', $pregnant, 200);
+                }
+
                 $validator = Validator::make($request->all(), [
-                    'awal_kehamilan' => 'required|date',
-                    'perkiraan_hamil' => 'required|date',
-                    'nama_suami' => 'required',
+                    'pregnancyStartDate' => 'required|date',
+                    'estimatedDueDate' => 'required|date',
+                    'husbandName' => 'required|string',
+                    'pregnancyNumber' => 'required|integer',
                     'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
@@ -100,7 +152,14 @@ class PregnantController extends Controller
                     return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
                 }
 
-                $pregnant->update($request->only(['awal_kehamilan', 'perkiraan_hamil', 'nama_suami', 'status']));
+                $pregnant->update($request->only([
+                    'pregnancyStartDate',
+                    'estimatedDueDate',
+                    'husbandName',
+                    'pregnancyNumber',
+                    'status'
+                ]));
+                
 
                 Cache::tags(['pregnants'])->flush();
 

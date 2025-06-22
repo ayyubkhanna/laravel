@@ -124,12 +124,11 @@ class PersonController extends Controller
     {
         try {
             if(request()->user()->hasRole(['editor', 'admin']) || request()->user()->isAbleTo('show-person')) {
-                $person = Person::findOrFail($id);
-                $person->load([
+                $person = Person::with([
                     'child.weighings', 
                     'child.immunization', 
-                    'pregnant.prenetalCheckups'
-                ]);
+                    'pregnant.prenatalCheckups'
+                ])->findOrFail($id);
 
                 return $this->httpResponse(true, 'success', $person, 200);
             } else {

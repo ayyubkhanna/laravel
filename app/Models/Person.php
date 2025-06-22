@@ -18,7 +18,7 @@ class Person extends Model
 
     public function pregnant()
     {
-        return $this->hasOne(Pregnant::class, 'people_id')->where('status', 'aktif');
+        return $this->hasMany(Pregnant::class, 'peopleId');
     }
 
     public function posyandu()

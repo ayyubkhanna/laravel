@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('pregnants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('people_id');
-            $table->string('awal_kehamilan');
-            $table->string('perkiraan_hamil');
-            $table->string('nama_suami');
+            $table->unsignedBigInteger('peopleId');
+            $table->date('pregnancyStartDate');
+            $table->date('estimatedDueDate');
+            $table->string('husbandName');
+            $table->integer('pregnancyNumber');
             $table->enum('status', ['aktif', 'melahirkan', 'selesai'])->default('aktif');
             $table->timestamps();
 
-            $table->foreign('people_id')->references('id')->on('people')->onDelete('cascade');
+            $table->foreign('peopleId')->references('id')->on('people')->onDelete('cascade');
         });
     }
 

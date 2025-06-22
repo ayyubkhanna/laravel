@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum'])->group( function () {
     Route::resource('immunization', ImmunizationController::class)->only(['store', 'update', 'destroy']);
     Route::resource('stunting', StuntingController::class)->only(['index', 'show', 'destroy']);
     Route::resource('posyandu', Posyandu::class);
-    Route::resource('pregnant', PregnantController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('pregnant', PregnantController::class);
     Route::resource('prenetal-checkup', PrenetalCheckupController::class)->only(['store', 'update', 'show', 'destroy']);
     Route::resource('person', PersonController::class);
     Route::get('child-chart', [ChartController::class, 'childChart']);
