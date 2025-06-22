@@ -90,20 +90,7 @@ class PregnantController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        try {
-            if($request->user()->hasRole(['editor', 'admin']) || $request->user()->isAbleTo('pregnants-create')) {
-                
-                // tampilkan semua pregnant yang aktif
-                $pregnant = Pregnant::with('person')->where('id', $id)->first();
-
-                return $this->httpResponse(true, 'success', $pregnant, 200);
-            } else {
-
-            }
-        } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
-            
-        }
+        //
     }
 
     /**
@@ -112,7 +99,7 @@ class PregnantController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            if(request()->user()->hasRole('editor') && request()->user()->isAbleTo('pregnants-update')) {
+            if(request()->user()->hasRole('editor') || request()->user()->isAbleTo('pregnants-update')) {
 
                 $pregnant = Pregnant::find($id);
 
@@ -122,7 +109,7 @@ class PregnantController extends Controller
 
                 if($request->has('status') && $request->keys() === ['status']) {
                     $validator = Validator::make($request->only('status'), [
-                        'status' => 'required|in:aktif,melahirkan,selesai'
+                        'status' => 'required|in:melahirkan,selesai'
                     ]);
 
                     if($validator->fails()){

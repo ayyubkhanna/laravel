@@ -126,7 +126,7 @@ class PersonController extends Controller
             if(request()->user()->hasRole(['editor', 'admin']) || request()->user()->isAbleTo('show-person')) {
                 $person = Person::with([
                     'child.weighings', 
-                    'child.immunization', 
+                    'child.immunizations', 
                     'pregnant.prenatalCheckups'
                 ])->findOrFail($id);
 
@@ -157,16 +157,24 @@ class PersonController extends Controller
                     'placeOfBirth' => 'required|string',
                     'dateOfBirth' => 'required|date',
                     'address' => 'required',
-                    'posyandu_id' => 'required|integer'
+                    'posyandu_id' => 'required|integer|exists:posyandus,id'
                 ]);
 
                 if($validator->fails()) {
                     return $this->httpResponse(false, 'validation failed', $validator->errors(), 422);
                 }
 
-                $posyandu = Posyandu::where('id', $request->posyandu_id)->firstOrFail();
+                $posyandu = Posyandu::where('id', $request->posyandu_id)->first();
 
-                $person = Person::findOrFail($id);
+                if(!$posyandu) {
+                    return $this->httpResponse(false, 'posyandu is not found', [], 404);
+                }
+                
+                $person = Person::find($id);
+                
+                if(!$person) {
+                    return $this->httpResponse(false, 'person is not found', [], 404);
+                }
 
                 $person->update([
                     'name' => $request->name,
@@ -181,8 +189,6 @@ class PersonController extends Controller
             } else {
                 return $this->httpResponse(false, 'you dont have access', [], 403);
             }
-        } catch (ModelNotFoundException $e) {
-            return $this->httpResponseError(false, 'Data not found', $e->getMessage(), 404);
         } catch (\Throwable $th) {
             return $this->httpResponseError(false, 'Error', $th->getMessage(), 500);
         }
