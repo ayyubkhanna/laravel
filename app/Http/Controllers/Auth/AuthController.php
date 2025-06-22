@@ -37,7 +37,7 @@ class AuthController extends Controller
                 ], 200);
             }
 
-            return response()->json(['message' => 'Anda tidak memiliki Akses'], 403);
+            return response()->json(['status' => false, 'message' => 'Anda tidak memiliki Akses'], 403);
         } else {
             // Jika kredensial salah
             return response()->json([
