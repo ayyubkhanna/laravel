@@ -46,7 +46,7 @@ class PregnantController extends Controller
                     'pregnancyStartDate' => 'required|date',
                     'estimatedDueDate' => 'required|date',
                     'husbandName' => 'required|string',
-                    'pregnancyNumber' => 'required|integer',
+                    'actualDeliveryDate' => 'nullable|date',
                     'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
@@ -70,7 +70,7 @@ class PregnantController extends Controller
                     'pregnancyStartDate' => $request->pregnancyStartDate,
                     'estimatedDueDate' => $request->estimatedDueDate,
                     'husbandName' => $request->husbandName,
-                    'pregnancyNumber' => $request->pregnancyNumber,
+                    'actualDeliveryDate' => $request->actualDeliveryDate,
                     'status' => $request->status
                 ]);
 
@@ -109,6 +109,7 @@ class PregnantController extends Controller
 
                 if($request->has('status') && $request->keys() === ['status']) {
                     $validator = Validator::make($request->only('status'), [
+                        'actualDeliveryDate' => 'required|date',
                         'status' => 'required|in:melahirkan,selesai'
                     ]);
 
@@ -116,7 +117,11 @@ class PregnantController extends Controller
                         return $this->httpResponseError(false, 'Validation failed', $validator->getMessageBag(), 422);
                     }
 
-                    $pregnant->update($request->only('status'));
+                    $pregnant->status = $request->status;
+
+                    $pregnant->actualDeliveryDate = $request->actualDeliveryDate;
+                    
+                    $pregnant->save();
 
                     Cache::tags(['pregnants'])->flush();
 
@@ -127,7 +132,6 @@ class PregnantController extends Controller
                     'pregnancyStartDate' => 'required|date',
                     'estimatedDueDate' => 'required|date',
                     'husbandName' => 'required|string',
-                    'pregnancyNumber' => 'required|integer',
                     'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
 
@@ -139,11 +143,9 @@ class PregnantController extends Controller
                     'pregnancyStartDate',
                     'estimatedDueDate',
                     'husbandName',
-                    'pregnancyNumber',
                     'status'
                 ]));
                 
-
                 Cache::tags(['pregnants'])->flush();
 
                 return $this->httpResponse(true, 'success', $pregnant, 200);

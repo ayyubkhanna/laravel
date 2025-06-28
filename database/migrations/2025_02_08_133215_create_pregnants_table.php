@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('pregnancyStartDate');
             $table->date('estimatedDueDate');
             $table->string('husbandName');
-            $table->integer('pregnancyNumber');
+            $table->date('actualDeliveryDate')->nullable();
             $table->enum('status', ['aktif', 'melahirkan', 'selesai'])->default('aktif');
             $table->timestamps();
 
