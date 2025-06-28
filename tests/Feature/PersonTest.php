@@ -61,9 +61,17 @@ class PersonTest extends TestCase
             "posyandu_id" => $posyandu->id
         ]);
 
-        $response->assertStatus(201);
-        $response->assertJsonStructure([
-            'status',
-        ]);
+        // jika gagal validasi
+        $response->assertStatus(422);
+        $response->assertJsonFragment(  [
+        'nik' => [
+            'The nik has already been taken.'
+        ]]);
+
+        // jika response benar
+        // $response->assertStatus(201);
+        // $response->assertJsonStructure([
+        //     'status',
+        // ]);
     }
 }

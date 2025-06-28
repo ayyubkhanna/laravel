@@ -17,13 +17,11 @@ class PregnantFactory extends Factory
     public function definition(): array
     {
         return [
-            'posyandu_id' => fake()->randomElement([1, 2]),
-            'name' => fake()->name,
-            'nik' => fake()->numberBetween(1, 1000),
-            'alamat' => "Dusun " . fake()->numberBetween(1, 5),
-            'awal_kehamilan' => fake()->date(),
-            'perkiraan_hamil' => fake()->date(),
-            'nama_suami' => fake()->firstNameMale,
+            'peopleId' => fake()->randomElement([1, 2]),
+            'pregnancyStartDate' => fake()->date(),
+            'estimatedDueDate' => fake()->date(),
+            'husbandName' => fake()->name(),
+            'status' => 'aktif',
         ];
     }
 }

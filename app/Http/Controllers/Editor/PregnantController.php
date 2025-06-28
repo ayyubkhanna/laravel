@@ -56,7 +56,7 @@ class PregnantController extends Controller
 
                 $person = Person::where('id',$request->peopleId)->first();
                 
-                if($person->child->isNotEmpty()) {
+                if($person->child) {
                     return $this->httpResponseError(false, 'person already status child', "BAD REQUEST", 400);
                 }
                 
@@ -106,11 +106,15 @@ class PregnantController extends Controller
                 if(!$pregnant) {
                     return $this->httpResponseError(false, 'not found', [], 404);
                 }
-
-                if($request->has('status') && $request->keys() === ['status']) {
-                    $validator = Validator::make($request->only('status'), [
+                
+                if( 
+                    $request->has('status') &&
+                    $request->has('actualDeliveryDate') &&
+                    count($request->all()) === 2
+                ) {
+                    $validator = Validator::make($request->only(['status', 'actualDeliveryDate']), [
+                        'status' => 'required|in:melahirkan,selesai',
                         'actualDeliveryDate' => 'required|date',
-                        'status' => 'required|in:melahirkan,selesai'
                     ]);
 
                     if($validator->fails()){
