@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('peopleId');
             $table->date('pregnancyStartDate');
             $table->date('estimatedDueDate');
-            $table->string('husbandName');
             $table->date('actualDeliveryDate')->nullable();
             $table->enum('status', ['aktif', 'melahirkan', 'selesai'])->default('aktif');
             $table->timestamps();

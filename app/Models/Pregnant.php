@@ -25,4 +25,9 @@ class Pregnant extends Model
     {
         return $this->hasMany(PrenetalCheckup::class, 'pregnantId');
     }
+
+    public function pregnantInformation()
+    {
+        return $this->hasOne(PregnantInformation::class, 'pregnantId');
+    }
 }
