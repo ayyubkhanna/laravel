@@ -29,18 +29,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user/login', function (Request $request) {
-    $user =  $request->user();
+Route::post('refresh', [AuthController::class, 'refresh']);
+Route::post('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
 
-    $user->roles;
-
-    return $user;
+Route::group([
+    'middleware' => 'api',
+], function ($router) {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('me', [AuthController::class, 'me']);
 });
-
-Route::post('login', [AuthController::class, 'login']);
-Route::get('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
-Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
-
 Route::name('admin')
         ->middleware(['auth:sanctum', 'role:admin'])
         ->group(function () {
@@ -48,7 +46,7 @@ Route::name('admin')
             Route::resource('role', RoleController::class);
             Route::resource('permission', PermissionController::class);
         });
-Route::middleware(['auth:sanctum'])->group( function () {
+Route::middleware(['auth:api'])->group( function () {
     Route::resource('data-anak', ChildController::class)->only(['store', 'update']);;
     Route::resource('weighing', WeighingController::class)->only(['store', 'update', 'destroy']);;
     Route::resource('immunization', ImmunizationController::class)->only(['store', 'update', 'destroy']);

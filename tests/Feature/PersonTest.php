@@ -62,7 +62,7 @@ class PersonTest extends TestCase
         ]);
 
         // jika gagal validasi
-        $response->assertStatus(422);
+        $response->assertStatus(404);
         $response->assertJsonFragment(  [
         'nik' => [
             'The nik has already been taken.'

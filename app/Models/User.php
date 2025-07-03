@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Contracts\LaratrustUser as LaratrustUserContract;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements LaratrustUser
+class User extends Authenticatable implements JWTSubject, LaratrustUserContract
 {
     use HasApiTokens, HasFactory, Notifiable, HasRolesAndPermissions;
 
@@ -47,4 +48,19 @@ class User extends Authenticatable implements LaratrustUser
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * @inheritDoc
+     */
+    public function getJWTCustomClaims() {
+        return [];
+        
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
 }

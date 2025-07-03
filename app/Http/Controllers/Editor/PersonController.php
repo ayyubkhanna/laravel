@@ -87,7 +87,7 @@ class PersonController extends Controller
                     'nik' => 'nullable|digits:16|unique:people,nik',
                     'placeOfBirth' => 'required|string',
                     'dateOfBirth' => 'required|date',
-                    'address' => 'required',
+                    'address' => 'required',    
                     'posyandu_id' => 'required|integer'
                 ]);
 
