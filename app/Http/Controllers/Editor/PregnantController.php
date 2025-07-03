@@ -166,26 +166,6 @@ class PregnantController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            
-            // cek role dari user
-            if(request()->user()->hasRole(['editor', 'admin']) || request()->user()->isAbleTo('delete-pregnant')) {
-
-                $pregnant = Pregnant::find($id);
-
-                // cek jika checkup tidak ada
-                if(!$pregnant) {
-                    return $this->httpResponseError(false, 'checkup not found', [], 404);
-                }
-
-                $pregnant->delete();
-
-                return $this->httpResponse(true, 'deleted success', [], 200);
-            } else {
-                return $this->httpResponseError(false, 'you dont have access', [], 403);
-            }
-        } catch (\Throwable $th) {
-            return $this->httpResponseError(false, 'ERROR', $th->getMessage(),500);
-        }
+        //
     }
 }
