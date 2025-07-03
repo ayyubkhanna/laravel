@@ -21,7 +21,7 @@ class PregnantController extends Controller
             if($request->user()->hasRole(['editor', 'admin']) || $request->user()->isAbleTo('pregnants-create')) {
                 
                 // tampilkan semua pregnant yang aktif
-                $pregnant = Pregnant::with('person')->where('status', 'aktif')->paginate(10);
+                $pregnant = Pregnant::with(['person', 'pregnantInformation'])->where('status', 'aktif')->paginate(10);
 
                 return $this->httpResponse(true, 'success', $pregnant, 200);
             } else {
@@ -45,7 +45,6 @@ class PregnantController extends Controller
                     'peopleId' => 'required|integer|exists:people,id',
                     'pregnancyStartDate' => 'required|date',
                     'estimatedDueDate' => 'required|date',
-                    'husbandName' => 'required|string',
                     'actualDeliveryDate' => 'nullable|date',
                     'status' => 'required|in:aktif,melahirkan,selesai'
                 ]);
@@ -69,7 +68,6 @@ class PregnantController extends Controller
                     'peopleId' => $person->id,
                     'pregnancyStartDate' => $request->pregnancyStartDate,
                     'estimatedDueDate' => $request->estimatedDueDate,
-                    'husbandName' => $request->husbandName,
                     'actualDeliveryDate' => $request->actualDeliveryDate,
                     'status' => $request->status
                 ]);

@@ -34,7 +34,7 @@ class Handler extends ExceptionHandler
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'The HTTP method is not allowed for this endpoint'
+                    'message' => $e->getMessage(),
                 ], 405);
             }
         });
@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
             if($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Endpoint could not be found'
+                    'message' => $e->getMessage()
                 ], 404);
             }
         });

@@ -127,7 +127,8 @@ class PersonController extends Controller
                 $person = Person::with([
                     'child.weighings', 
                     'child.immunizations', 
-                    'pregnant.prenatalCheckups'
+                    'pregnant.prenatalCheckups',
+                    'pregnant.pregnantInformation'
                 ])->findOrFail($id);
 
                 return $this->httpResponse(true, 'success', $person, 200);

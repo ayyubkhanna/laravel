@@ -5,17 +5,15 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ChartController;
-use App\Http\Controllers\Editor\Child\ChildCheckup;
 use App\Http\Controllers\Editor\Child\ImmunizationController;
 use App\Http\Controllers\Editor\Child\WeighingController;
 use App\Http\Controllers\Editor\ChildController;
 use App\Http\Controllers\Editor\PersonController;
 use App\Http\Controllers\Editor\Posyandu;
-use App\Http\Controllers\Editor\Pregnant\CheckupController;
+use App\Http\Controllers\Editor\Pregnant\PregnantInformationController;
 use App\Http\Controllers\Editor\Pregnant\PrenetalCheckupController;
 use App\Http\Controllers\Editor\PregnantController;
 use App\Http\Controllers\Editor\StuntingController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('refresh', [AuthController::class, 'refresh']);
-Route::post('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
+Route::get('unauthorize', [AuthController::class, 'unauthorize'])->name('unauthorize');
 
 Route::group([
     'middleware' => 'api',
@@ -54,6 +52,7 @@ Route::middleware(['auth:api'])->group( function () {
     Route::resource('posyandu', Posyandu::class);
     Route::resource('pregnant', PregnantController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('prenetal-checkup', PrenetalCheckupController::class)->only(['store', 'update', 'show', 'destroy']);
+    Route::resource('detail-pregnant', PregnantInformationController::class)->only(['store', 'update',]);
     Route::resource('person', PersonController::class);
     Route::get('child-chart', [ChartController::class, 'childChart']);
     Route::get('total-chart', [ChartController::class, 'total']);
